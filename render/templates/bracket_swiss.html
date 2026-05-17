@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="bracket.css">
+</head>
+<body class="swiss">
+  {{ if .Name }}<h1>{{ .Name }}</h1>{{ end }}
+  <div class="swiss-grid" style="grid-template-columns: repeat({{ .NumColumns }}, minmax(0, 1fr));">
+    {{ range .Cells }}
+    <div class="swiss-cell {{ .State }}" style="grid-column: {{ .GridColumn }}; grid-row: {{ .GridRowStart }} / {{ .GridRowEnd }}">
+      <div class="swiss-cell-header">{{ .Label }}</div>
+      {{ if .Matches }}
+        <div class="swiss-cell-matches">
+          {{ range .Matches }}
+          <div class="match">
+            {{ template "teamRow" (teamRowArgs . .Team1 .Score1) }}
+            {{ template "teamRow" (teamRowArgs . .Team2 .Score2) }}
+          </div>
+          {{ end }}
+        </div>
+      {{ else if .Teams }}
+        <div class="swiss-terminal-teams">
+          {{ range .Teams }}
+          <div class="swiss-terminal-team">{{ . }}</div>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+    {{ end }}
+  </div>
+</body>
+</html>
+
+{{ define "teamRow" }}
+<div class="team-row {{ .Class }}">
+  <span class="team-name">{{ .Name }}</span>
+  {{ if not .Pending }}<span class="team-score">{{ .Score }}</span>{{ end }}
+</div>
+{{ end }}

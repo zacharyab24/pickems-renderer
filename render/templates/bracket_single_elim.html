@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="bracket.css">
+</head>
+<body>
+  {{ if .Name }}<h1>{{ .Name }}</h1>{{ end }}
+  <div class="bracket">
+    {{ range $i, $round := .Rounds }}
+
+      {{/* Connector column before every round except the first */}}
+      {{ if gt $i 0 }}
+      <div class="connector-col">
+        {{ $prevMatchCount := index $.Rounds (sub $i 1) | matchCount }}
+        {{ range makeRange (div $prevMatchCount 2) }}
+        <div class="connector-segment">
+          <div class="connector-top"></div>
+          <div class="connector-bottom"></div>
+        </div>
+        {{ end }}
+      </div>
+      {{ end }}
+
+      <div class="round">
+        <div class="round-name">{{ $round.Name }}</div>
+        <div class="round-matches">
+          {{ range $round.Matches }}
+          <div class="match">
+            {{ template "teamRow" (teamRowArgs . .Team1 .Score1) }}
+            {{ template "teamRow" (teamRowArgs . .Team2 .Score2) }}
+          </div>
+          {{ end }}
+        </div>
+      </div>
+
+    {{ end }}
+  </div>
+</body>
+</html>
+
+{{ define "teamRow" }}
+<div class="team-row {{ .Class }}">
+  <span class="team-name">{{ .Name }}</span>
+  {{ if not .Pending }}<span class="team-score">{{ .Score }}</span>{{ end }}
+</div>
+{{ end }}

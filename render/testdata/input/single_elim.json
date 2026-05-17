@@ -1,0 +1,11 @@
+[
+  {"ID":"qf_0001","Team1":"HEROIC","Team2":"FlyQuest","Winner":"HEROIC","Score":"2-0","Section":"Quarterfinals"},
+  {"ID":"qf_0002","Team1":"Team Liquid","Team2":"GamerLegion","Winner":"Team Liquid","Score":"2-1","Section":"Quarterfinals"},
+  {"ID":"qf_0003","Team1":"Natus Vincere","Team2":"Spirit","Winner":"Spirit","Score":"1-2","Section":"Quarterfinals"},
+  {"ID":"qf_0004","Team1":"Vitality","Team2":"Ninjas in Pyjamas","Winner":"Vitality","Score":"2-0","Section":"Quarterfinals"},
+
+  {"ID":"sf_0001","Team1":"HEROIC","Team2":"Team Liquid","Winner":"Team Liquid","Score":"1-2","Section":"Semifinals"},
+  {"ID":"sf_0002","Team1":"Spirit","Team2":"Vitality","Winner":"Vitality","Score":"1-2","Section":"Semifinals"},
+
+  {"ID":"gf_0001","Team1":"Team Liquid","Team2":"Vitality","Winner":"Vitality","Score":"0-2","Section":"Grand Final"}
+]

@@ -1,0 +1,39 @@
+[
+  {"ID":"ayB546T4zZ_0001","Team1":"PaiN Gaming","Team2":"Gentle Mates","Winner":"PaiN Gaming","Score":"2-0","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0002","Team1":"Legacy","Team2":"Team Liquid","Winner":"Team Liquid","Score":"1-2","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0003","Team1":"HEROIC","Team2":"Ninjas in Pyjamas","Winner":"HEROIC","Score":"2-0","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0004","Team1":"GamerLegion","Team2":"FlyQuest","Winner":"GamerLegion","Score":"2-0","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0005","Team1":"3DMAX","Team2":"SAW","Winner":"3DMAX","Score":"2-0","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0006","Team1":"BetBoom Team","Team2":"MIBR","Winner":"BetBoom Team","Score":"2-1","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0007","Team1":"Aurora Gaming","Team2":"Fnatic","Winner":"Aurora Gaming","Score":"2-0","Section":"Round 1"},
+  {"ID":"ayB546T4zZ_0008","Team1":"Astralis","Team2":"B8","Winner":"B8","Score":"0-2","Section":"Round 1"},
+
+  {"ID":"U7JeCe3nrs_0001","Team1":"GamerLegion","Team2":"PaiN Gaming","Winner":"PaiN Gaming","Score":"1-2","Section":"Round 2"},
+  {"ID":"U7JeCe3nrs_0002","Team1":"HEROIC","Team2":"BetBoom Team","Winner":"HEROIC","Score":"2-0","Section":"Round 2"},
+  {"ID":"U7JeCe3nrs_0003","Team1":"Aurora Gaming","Team2":"Team Liquid","Winner":"Aurora Gaming","Score":"2-1","Section":"Round 2"},
+  {"ID":"U7JeCe3nrs_0004","Team1":"3DMAX","Team2":"B8","Winner":"B8","Score":"0-2","Section":"Round 2"},
+  {"ID":"vINHUV3all_0001","Team1":"Legacy","Team2":"Gentle Mates","Winner":"Legacy","Score":"2-0","Section":"Round 2"},
+  {"ID":"vINHUV3all_0002","Team1":"SAW","Team2":"Ninjas in Pyjamas","Winner":"SAW","Score":"2-1","Section":"Round 2"},
+  {"ID":"vINHUV3all_0003","Team1":"Fnatic","Team2":"FlyQuest","Winner":"FlyQuest","Score":"0-2","Section":"Round 2"},
+  {"ID":"vINHUV3all_0004","Team1":"Astralis","Team2":"MIBR","Winner":"Astralis","Score":"2-0","Section":"Round 2"},
+
+  {"ID":"VKTHpS7s0x_0001","Team1":"Aurora Gaming","Team2":"HEROIC","Winner":"HEROIC","Score":"0-2","Section":"Round 3"},
+  {"ID":"VKTHpS7s0x_0002","Team1":"B8","Team2":"PaiN Gaming","Winner":"PaiN Gaming","Score":"0-2","Section":"Round 3"},
+  {"ID":"IykJinz1G8_0001","Team1":"GamerLegion","Team2":"SAW","Winner":"SAW","Score":"1-2","Section":"Round 3"},
+  {"ID":"IykJinz1G8_0002","Team1":"Team Liquid","Team2":"BetBoom Team","Winner":"Team Liquid","Score":"2-1","Section":"Round 3"},
+  {"ID":"IykJinz1G8_0003","Team1":"3DMAX","Team2":"FlyQuest","Winner":"FlyQuest","Score":"1-2","Section":"Round 3"},
+  {"ID":"IykJinz1G8_0004","Team1":"Astralis","Team2":"Legacy","Winner":"Legacy","Score":"0-2","Section":"Round 3"},
+  {"ID":"ilPVE8BYF6_0001","Team1":"Ninjas in Pyjamas","Team2":"Gentle Mates","Winner":"Gentle Mates","Score":"1-2","Section":"Round 3"},
+  {"ID":"ilPVE8BYF6_0002","Team1":"Fnatic","Team2":"MIBR","Winner":"Fnatic","Score":"2-0","Section":"Round 3"},
+
+  {"ID":"AmF15pUfHd_0001","Team1":"Aurora Gaming","Team2":"SAW","Winner":"SAW","Score":"1-2","Section":"Round 4"},
+  {"ID":"AmF15pUfHd_0002","Team1":"Team Liquid","Team2":"FlyQuest","Winner":"Team Liquid","Score":"2-0","Section":"Round 4"},
+  {"ID":"AmF15pUfHd_0003","Team1":"B8","Team2":"Legacy","Winner":"B8","Score":"2-1","Section":"Round 4"},
+  {"ID":"f3Ubb66fCx_0001","Team1":"3DMAX","Team2":"Astralis","Winner":"Astralis","Score":"1-2","Section":"Round 4"},
+  {"ID":"f3Ubb66fCx_0002","Team1":"BetBoom Team","Team2":"Gentle Mates","Winner":"Gentle Mates","Score":"1-2","Section":"Round 4"},
+  {"ID":"f3Ubb66fCx_0003","Team1":"GamerLegion","Team2":"Fnatic","Winner":"GamerLegion","Score":"2-0","Section":"Round 4"},
+
+  {"ID":"xGt8Rnd5a_0001","Team1":"Aurora Gaming","Team2":"Astralis","Winner":"Aurora Gaming","Score":"2-1","Section":"Round 5"},
+  {"ID":"xGt8Rnd5a_0002","Team1":"Legacy","Team2":"Gentle Mates","Winner":"Legacy","Score":"2-1","Section":"Round 5"},
+  {"ID":"xGt8Rnd5a_0003","Team1":"GamerLegion","Team2":"FlyQuest","Winner":"GamerLegion","Score":"2-0","Section":"Round 5"}
+]

@@ -1,0 +1,222 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background-color: #2b2d31;
+  color: #f2f3f5;
+  font-family: 'Inter', 'Arial', sans-serif;
+  padding: 4px 32px;
+  /* Fixed width keeps the screenshot size predictable */
+  width: 1100px;
+}
+
+/* Swiss layout: wider canvas, columns scale to round count */
+body.swiss { width: 1400px; }
+
+h1 {
+  text-align: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #f2f3f5;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 20px;
+  margin-bottom: 12px;
+}
+
+/* Swiss grid sits closer to the title — negative margin compensates for
+   align-items: center floating the top row cells down within their spans */
+body.swiss h1 { margin-bottom: -30px; }
+
+/* Rounds sit side-by-side in a row */
+.bracket {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 0;
+}
+
+/* Each round is a column */
+.round {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.round-name {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #80848e;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #3f4147;
+  margin-bottom: 12px;
+}
+
+/* Matches fill the round column with equal spacing */
+.round-matches {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: space-around;
+}
+
+/* Connector column between each pair of rounds.
+   Draws ] shaped lines using three borders. */
+.connector-col {
+  width: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  /* Offset accounts for round-name height so lines align with match cards */
+  padding-top: 35px;
+}
+
+.connector-segment {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.connector-top {
+  flex: 1;
+  border-right: 2px solid #3f4147;
+  border-bottom: 2px solid #3f4147;
+}
+
+.connector-bottom {
+  flex: 1;
+  border-right: 2px solid #3f4147;
+  border-top: 2px solid #3f4147;
+}
+
+/* Individual match card */
+.match {
+  margin: 6px 8px;
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid #3f4147;
+}
+
+.team-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 10px;
+  background: #313338;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  font-size: 11.5px;
+  font-weight: 500;
+  min-height: 32px;
+}
+
+.team-row:last-child { border-bottom: none; }
+
+/* Highlight winner / dim loser / neutral pending */
+.team-row.winner {
+  background: #43464e;
+  color: #f2f3f5;
+}
+
+.team-row.loser {
+  background: #25272b;
+  color: #80848e;
+}
+
+.team-row.pending { color: #80848e; }
+
+.team-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.team-score {
+  font-weight: 700;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  min-width: 16px;
+  text-align: right;
+}
+
+.team-row.winner .team-score { color: #f0b232; }
+.team-row.loser  .team-score { color: #5c6068; }
+
+/* ── Swiss W-L record grid ──────────────────────────────────────────── */
+
+/* grid-template-columns is set inline (varies with rounds played).
+   12 sub-rows = LCM(1,2,3,4) so every column size gets clean integer spans:
+     1 cell  → span 12   2 cells → span 6   3 cells → span 4   4 cells → span 3 */
+.swiss-grid {
+  display: grid;
+  grid-template-rows: repeat(12, 1fr);
+  /* row-gap tight; column-gap wide so the diagonal flow reads clearly */
+  row-gap: 6px;
+  column-gap: 32px;
+  align-items: center;
+  min-height: 500px;
+}
+
+.swiss-cell {
+  background: #313338;
+  border: 1px solid #3f4147;
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.swiss-cell.qualify {
+  border-color: #3a5b48;
+  background: #22392c;
+}
+
+.swiss-cell.eliminate {
+  border-color: #5e3a3d;
+  background: #3a2225;
+}
+
+.swiss-cell-header {
+  padding: 5px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.12em;
+  color: #80848e;
+  background: #383a40;
+  border-bottom: 1px solid #3f4147;
+}
+
+.swiss-cell.qualify .swiss-cell-header {
+  color: #8de9a8;
+  background: #2a4837;
+  border-bottom-color: #3a5b48;
+}
+
+.swiss-cell.eliminate .swiss-cell-header {
+  color: #f49797;
+  background: #4a2c2f;
+  border-bottom-color: #5e3a3d;
+}
+
+/* Match cards flush to cell edges; gap only between adjacent matches */
+.swiss-cell-matches { padding: 0; }
+.swiss-cell .match { margin: 0; border: none; border-radius: 0; }
+.swiss-cell .match + .match { margin-top: 5px; }
+
+/* Terminal cells (qualify/eliminate) — team list instead of match cards */
+.swiss-terminal-teams { padding: 2px 0; }
+
+.swiss-terminal-team {
+  padding: 6px 10px;
+  font-size: 11.5px;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.swiss-terminal-team:last-child { border-bottom: none; }
+
+.swiss-cell.qualify .swiss-terminal-team { color: #9eecb6; }
+.swiss-cell.eliminate .swiss-terminal-team { color: #f0a2a2; }
