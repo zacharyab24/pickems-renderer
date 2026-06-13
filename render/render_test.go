@@ -49,6 +49,16 @@ func TestRenderSwiss(t *testing.T) {
 	assertFileWritten(t, out)
 }
 
+func TestRenderSwissPartial(t *testing.T) {
+	setup(t)
+	nodes := loadNodes(t, "swiss_partial.json")
+	out := filepath.Join(outputDir, "swiss_partial.png")
+	if err := render.RenderBracket(nodes, "swiss", "Stage 3 (Ongoing)", out); err != nil {
+		t.Fatalf("RenderBracket: %v", err)
+	}
+	assertFileWritten(t, out)
+}
+
 func TestRenderSingleElim(t *testing.T) {
 	setup(t)
 	nodes := loadNodes(t, "single_elim.json")
