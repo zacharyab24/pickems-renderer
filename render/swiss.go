@@ -3,6 +3,8 @@ package render
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 // subRows is the LCM of 1, 2, 3, 4 — ensures clean integer row spans for every
@@ -55,7 +57,7 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		sectionMatches[n.Section] = append(sectionMatches[n.Section], n)
 	}
 	sort.SliceStable(sectionOrder, func(i, j int) bool {
-		return parseTrailingInt(sectionOrder[i]) < parseTrailingInt(sectionOrder[j])
+		return swissSectionRank(sectionOrder[i]) < swissSectionRank(sectionOrder[j])
 	})
 
 	// Initialise every real team at 0-0.
@@ -212,6 +214,32 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		Cells:      finalCells,
 		NumColumns: numColumns,
 	}
+}
+
+// swissSectionRank returns a sort key for Swiss bracket section names, handling
+// two naming conventions used by Liquipedia:
+//   - "Round N" (or any "... N"): returns N  e.g. "Round 3" → 3
+//   - "W:L" record format:        returns W+L e.g. "2:1" → 3, "0:0" → 0
+//
+// When the API returns sections in a non-chronological order (common with the
+// "W:L" format since Atoi("2:1") fails and parseTrailingInt returns 0 for all),
+// this rank ensures Round 1 (rank 0 or 1) is always processed before Round 5
+// (rank 4 or 5), so pre-match records are computed correctly.
+func swissSectionRank(section string) int {
+	// "Round N" or any trailing-integer format
+	if n := parseTrailingInt(section); n > 0 {
+		return n
+	}
+	// "W:L" format: sort by total rounds played (wins + losses)
+	parts := strings.SplitN(section, ":", 2)
+	if len(parts) == 2 {
+		w, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+		l, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+		if err1 == nil && err2 == nil {
+			return w + l
+		}
+	}
+	return 0
 }
 
 // padSwissPlaceholders adds empty placeholder cells for every expected position

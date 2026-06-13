@@ -49,6 +49,20 @@ func TestRenderSwiss(t *testing.T) {
 	assertFileWritten(t, out)
 }
 
+// TestRenderSwissWLSections uses the same bracket data as TestRenderSwiss but
+// with "W:L" format section names (e.g. "2:1" instead of "Round 4"). This is
+// the format Liquipedia actually uses for Swiss brackets, and previously caused
+// parseTrailingInt to return 0 for all sections so sort order was undefined.
+func TestRenderSwissWLSections(t *testing.T) {
+	setup(t)
+	nodes := loadNodes(t, "swiss_wl_sections.json")
+	out := filepath.Join(outputDir, "swiss_wl_sections.png")
+	if err := render.RenderBracket(nodes, "swiss", "PGL Masters Bucharest 2025 Major — Group Stage (W:L sections)", out); err != nil {
+		t.Fatalf("RenderBracket: %v", err)
+	}
+	assertFileWritten(t, out)
+}
+
 func TestRenderSwissPartial(t *testing.T) {
 	setup(t)
 	nodes := loadNodes(t, "swiss_partial.json")
