@@ -217,20 +217,27 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 }
 
 // swissSectionRank returns a sort key for Swiss bracket section names, handling
-// two naming conventions used by Liquipedia:
-//   - "Round N" (or any "... N"): returns N  e.g. "Round 3" → 3
-//   - "W:L" record format:        returns W+L e.g. "2:1" → 3, "0:0" → 0
-//
-// When the API returns sections in a non-chronological order (common with the
-// "W:L" format since Atoi("2:1") fails and parseTrailingInt returns 0 for all),
-// this rank ensures Round 1 (rank 0 or 1) is always processed before Round 5
-// (rank 4 or 5), so pre-match records are computed correctly.
+// three naming conventions:
+//   - "Round N" (or any trailing integer):    returns N  e.g. "Round 3" → 3
+//   - "Round N: Team vs Team" (PandaScore):   returns N  e.g. "Round 1: 9z vs FLY" → 1
+//   - "W:L" record format (Liquipedia):       returns W+L  e.g. "2:1" → 3
 func swissSectionRank(section string) int {
-	// "Round N" or any trailing-integer format
+	// Plain trailing integer: "Round 3" → 3
 	if n := parseTrailingInt(section); n > 0 {
 		return n
 	}
-	// "W:L" format: sort by total rounds played (wins + losses)
+	// "Round N: ..." prefix (PandaScore per-match names)
+	if strings.HasPrefix(section, "Round ") {
+		after := strings.TrimPrefix(section, "Round ")
+		// after is "1: 9z vs FLY" — grab digits up to the first non-digit
+		numStr := strings.FieldsFunc(after, func(r rune) bool { return r < '0' || r > '9' })
+		if len(numStr) > 0 {
+			if n, err := strconv.Atoi(numStr[0]); err == nil && n > 0 {
+				return n
+			}
+		}
+	}
+	// "W:L" format: "2:1" → 3
 	parts := strings.SplitN(section, ":", 2)
 	if len(parts) == 2 {
 		w, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
