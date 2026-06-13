@@ -3,11 +3,20 @@ package render
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 // subRows is the LCM of 1, 2, 3, 4 — ensures clean integer row spans for every
 // possible column size in a standard Swiss bracket (max 4 cells per column).
 const subRows = 12
+
+// swissWinThreshold / swissLossThreshold define the standard CS Swiss format:
+// qualify at 3 wins, eliminate at 3 losses. Used to pad empty future-round cells
+// so the full bracket structure is visible even for ongoing tournaments.
+const swissWinThreshold, swissLossThreshold = 3, 3
+
+type cellKey struct{ wins, losses int }
 
 type swissCell struct {
 	GridColumn   int // css grid-column (1-indexed, = wins+losses+1)
@@ -47,8 +56,8 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		}
 		sectionMatches[n.Section] = append(sectionMatches[n.Section], n)
 	}
-	sort.Slice(sectionOrder, func(i, j int) bool {
-		return parseTrailingInt(sectionOrder[i]) < parseTrailingInt(sectionOrder[j])
+	sort.SliceStable(sectionOrder, func(i, j int) bool {
+		return swissSectionRank(sectionOrder[i]) < swissSectionRank(sectionOrder[j])
 	})
 
 	// Initialise every real team at 0-0.
@@ -64,7 +73,6 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		}
 	}
 
-	type cellKey struct{ wins, losses int }
 	cellMap := map[cellKey][]match{}
 
 	for _, section := range sectionOrder {
@@ -144,6 +152,10 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 	sort.Strings(qualifyTeams)
 	sort.Strings(eliminateTeams)
 
+	// Pad every expected Swiss cell so the full bracket structure is visible for
+	// ongoing tournaments where future rounds have no data yet.
+	padSwissPlaceholders(prePositioned)
+
 	// Group match cells into columns by rounds played (wins+losses), find max.
 	colCells := map[int][]swissCell{}
 	maxRounds := 0
@@ -155,24 +167,21 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		}
 	}
 
-	// Aggregate cells share the last match column. Sentinel Losses values
-	// (-1 / maxInt) force them to the top and bottom when that column is sorted.
-	if len(qualifyTeams) > 0 {
-		colCells[maxRounds] = append(colCells[maxRounds], swissCell{
-			Losses: -1,
-			Teams:  qualifyTeams,
-			State:  "qualify",
-			Label:  "Advanced",
-		})
-	}
-	if len(eliminateTeams) > 0 {
-		colCells[maxRounds] = append(colCells[maxRounds], swissCell{
-			Losses: 1<<31 - 1,
-			Teams:  eliminateTeams,
-			State:  "eliminate",
-			Label:  "Eliminated",
-		})
-	}
+	// Aggregate terminal cells always appear in the last column, even when empty,
+	// so the bracket structure is visible before teams have qualified/eliminated.
+	// Sentinel Losses values (-1 / maxInt) force them to top and bottom when sorted.
+	colCells[maxRounds] = append(colCells[maxRounds], swissCell{
+		Losses: -1,
+		Teams:  qualifyTeams,
+		State:  "qualify",
+		Label:  "Advanced",
+	})
+	colCells[maxRounds] = append(colCells[maxRounds], swissCell{
+		Losses: 1<<31 - 1,
+		Teams:  eliminateTeams,
+		State:  "eliminate",
+		Label:  "Eliminated",
+	})
 
 	// Assign CSS grid positions.
 	// Within each column, sort by losses ascending (fewest losses at top).
@@ -204,5 +213,76 @@ func computeSwissGrid(nodes []MatchNode, name string) swissBracket {
 		Name:       name,
 		Cells:      finalCells,
 		NumColumns: numColumns,
+	}
+}
+
+// swissSectionRank returns a sort key for Swiss bracket section names, handling
+// three naming conventions:
+//   - "Round N" (or any trailing integer):    returns N  e.g. "Round 3" → 3
+//   - "Round N: Team vs Team" (PandaScore):   returns N  e.g. "Round 1: 9z vs FLY" → 1
+//   - "W:L" record format (Liquipedia):       returns W+L  e.g. "2:1" → 3
+func swissSectionRank(section string) int {
+	// Plain trailing integer: "Round 3" → 3
+	if n := parseTrailingInt(section); n > 0 {
+		return n
+	}
+	// "Round N: ..." prefix (PandaScore per-match names)
+	if strings.HasPrefix(section, "Round ") {
+		after := strings.TrimPrefix(section, "Round ")
+		// after is "1: 9z vs FLY" — grab digits up to the first non-digit
+		numStr := strings.FieldsFunc(after, func(r rune) bool { return r < '0' || r > '9' })
+		if len(numStr) > 0 {
+			if n, err := strconv.Atoi(numStr[0]); err == nil && n > 0 {
+				return n
+			}
+		}
+	}
+	// "W:L" format: "2:1" → 3
+	parts := strings.SplitN(section, ":", 2)
+	if len(parts) == 2 {
+		w, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+		l, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+		if err1 == nil && err2 == nil {
+			return w + l
+		}
+	}
+	return 0
+}
+
+// padSwissPlaceholders adds empty placeholder cells for every expected position
+// in a standard CS Swiss bracket that doesn't already have real match data.
+// This ensures the full grid is rendered even during an ongoing tournament.
+func padSwissPlaceholders(cells map[cellKey]swissCell) {
+	// Non-terminal match cells: all (w, l) where both are below the threshold.
+	for w := 0; w < swissWinThreshold; w++ {
+		for l := 0; l < swissLossThreshold; l++ {
+			key := cellKey{w, l}
+			if _, exists := cells[key]; !exists {
+				cells[key] = swissCell{
+					Wins:   w,
+					Losses: l,
+					Label:  fmt.Sprintf("%d:%d", w, l),
+				}
+			}
+		}
+	}
+	// Individual terminal cells: 3:0 (qualify) and 0:3 (eliminate).
+	qualKey := cellKey{swissWinThreshold, 0}
+	if _, exists := cells[qualKey]; !exists {
+		cells[qualKey] = swissCell{
+			Wins:   swissWinThreshold,
+			Losses: 0,
+			State:  "qualify",
+			Label:  fmt.Sprintf("%d:%d", swissWinThreshold, 0),
+		}
+	}
+	elimKey := cellKey{0, swissLossThreshold}
+	if _, exists := cells[elimKey]; !exists {
+		cells[elimKey] = swissCell{
+			Wins:   0,
+			Losses: swissLossThreshold,
+			State:  "eliminate",
+			Label:  fmt.Sprintf("%d:%d", 0, swissLossThreshold),
+		}
 	}
 }
